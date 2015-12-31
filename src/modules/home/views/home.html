@@ -1,0 +1,15 @@
+<div class="content_home">
+  
+  <h1>Demo login!</h1>
+  <p>este es un demo de login con angular + es6</p>
+
+  <div ng-if="home.sessionActive">
+    <pre>User: {{home.user.name}}</pre>
+    <pre>{{home.user}}</pre>
+  </div>
+
+  <div ng-if="!home.sessionActive">
+    <a href="/login">Iniciar sesion</a>
+  </div>
+
+</div>
