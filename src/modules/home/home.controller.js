@@ -1,8 +1,8 @@
 'use strict';
 
-export default class HomeController {
-  constructor(words, auth) {
-    this.wordsSvc = words;
+class HomeController {
+
+  constructor(auth) {
     this.authSvc = auth;
 
     this.isAuth = this.authSvc.isAuth();
@@ -12,18 +12,15 @@ export default class HomeController {
     }
   }
 
-  getRandomWord() {
-    this.wordsSvc.getWords().then((res) => {
-      this.word = res.data;
-    });
-  }
-
   logout(event) {
     event.preventDefault();
     this.authSvc.logout();
     this.isAuth = false;
     this.user = null;
   }
+
 }
 
-HomeController.$inject = ['words', 'auth'];
+HomeController.$inject = ['auth'];
+
+export default HomeController;

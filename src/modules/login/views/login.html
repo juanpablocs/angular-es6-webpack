@@ -1,13 +1,13 @@
 <div class="login">
   <h1>Login</h1>
   <form role="form" ng-submit="login.login()">
-    <div>
+    <div class="input-control">
       <label for="username">Username</label>
-      <input type="text" ng-model="login.user.name" id="username" placeholder="Username">
+      <input type="text" ng-model="login.user.name" id="username" placeholder="demo">
     </div>
-    <div>
+    <div class="input-control">
       <label for="password">Password</label>
-      <input type="password" ng-model="login.user.password" id="password" placeholder="Password">
+      <input type="password" ng-model="login.user.password" id="password" placeholder="demo">
     </div>
     <button type="submit">Submit</button>
   </form>

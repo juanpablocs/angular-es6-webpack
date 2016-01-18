@@ -1,14 +1,15 @@
 <div class="content_home">
-  
+
   <h1>Demo login!</h1>
   <p>este es un demo de login con angular + es6</p>
 
-  <div ng-if="home.sessionActive">
-    <pre>User: {{home.user.name}}</pre>
-    <pre>{{home.user}}</pre>
+  <div ng-if="home.isAuth">
+    <pre>User: {{home.user}}</pre>
+    <!-- <pre>{{home.token}}</pre> -->
+    <a href="#logout" ng-click="home.logout($event)">logout</a>
   </div>
 
-  <div ng-if="!home.sessionActive">
+  <div ng-if="!home.isAuth">
     <a href="/login">Iniciar sesion</a>
   </div>
 

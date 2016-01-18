@@ -3,13 +3,12 @@
 import angular from 'angular';
 import uirouter from 'angular-ui-router';
 
-import jwtDecode from 'jwt-decode';
-
 class Auth {
-  constructor($http) {
+  constructor($http, $q) {
     this.$http = $http;
-    this.token = localStorage.getItem('jwt');
-    this.user  = this.token && jwtDecode(this.token);
+    this.$q    = $q;
+    this.token = localStorage.getItem('token');
+    this.user  = localStorage.getItem('user');
   }
 
   isAuth() {
@@ -21,41 +20,28 @@ class Auth {
   }
 
   login(username, password) {
-    return this.$http.post('http://localhost:3001/sessions/create',
-                      JSON.stringify({username, password})
-    ).then((res) => {
-      this.token = res.data.id_token;
-      localStorage.setItem('jwt', this.token);
-    });
+    let deferred = this.$q.defer();
+    if(username=='demo' && password=='demo'){
+      this.token = 1234566789;
+      localStorage.setItem('token', this.token);
+      localStorage.setItem('user', username);
+      deferred.resolve(true);
+    }else{
+      deferred.reject(false);
+    }
+    return deferred.promise;
   }
 
   logout() {
-    localStorage.removeItem('jwt');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.token = null;
     this.user = null;
   }
 }
 
-Auth.$inject = ['$http'];
-
-class AuthInterceptor {
-  request(config) {
-    const token = localStorage.getItem('jwt');
-    if (token) {
-      config.headers.Authorization = 'Bearer ' + token;
-    }
-    return config;
-  }
-}
-
-config.$inject = ['$httpProvider'];
-
-function config($httpProvider) {
-  $httpProvider.interceptors.push('authInterceptor');
-}
+Auth.$inject = ['$http', '$q'];
 
 export default angular.module('services.auth', [uirouter])
   .service('auth', Auth)
-  .service('authInterceptor', AuthInterceptor)
-  .config(config)
   .name;
