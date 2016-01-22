@@ -2,12 +2,21 @@
 <html ng-app="app" lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Test demo</title>
-  <base href="/">
+  <title>Test demo3</title>
+  <base href="/" />
+  {% if (o.htmlWebpackPlugin.options.prod) { %}
+  <link rel="stylesheet" href="app.{%=o.webpack.hash%}.css" media="all">
+  {% } %}
 </head>
 <body>
+
   <div class="container">
     <ui-view></ui-view>
   </div>
+
+  {% for (var chunk in o.htmlWebpackPlugin.files.chunks) { %}
+  <script src="{%=o.htmlWebpackPlugin.files.chunks[chunk].entry %}"></script>
+  {% } %}
+
 </body>
 </html>

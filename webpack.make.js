@@ -1,13 +1,10 @@
 'use strict';
 
-// Modules
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = function makeWebpackConfig (options) {
-
-  var BUILD = !!options.BUILD;
 
   var config = {};
 
@@ -16,35 +13,13 @@ module.exports = function makeWebpackConfig (options) {
   }
 
   config.output = {
-    // Absolute output directory
     path: __dirname + '/public',
-
-    // Output path from the view of the page
-    // Uses webpack-dev-server in development
-    publicPath: BUILD ? '/' : 'http://localhost:8080/',
-
-    // Filename for entry points
-    // Only adds hash in build mode
-    filename: BUILD ? '[name].[hash].js' : '[name].bundle.js',
-
-    // Filename for non-entry points
-    // Only adds hash in build mode
-    chunkFilename: BUILD ? '[name].[hash].js' : '[name].bundle.js'
+    publicPath: options.prod ? '/' : 'http://localhost:8080/',
+    filename: options.prod ? '[name].[hash].js' : '[name].bundle.js',
+    chunkFilename: options.prod ? '[name].[hash].js' : '[name].bundle.js'
   }
 
-
-  if (BUILD) {
-    config.devtool = 'source-map';
-  } else {
-    config.devtool = 'eval';
-  }
-
-  /**
-   * Loaders
-   * Reference: http://webpack.github.io/docs/configuration.html#module-loaders
-   * List: http://webpack.github.io/docs/list-of-loaders.html
-   * This handles most of the magic responsible for converting modules
-   */
+  config.devtool = options.prod ? 'source-map' : 'eval';
 
   // Initialize module
   config.module = {
@@ -53,9 +28,7 @@ module.exports = function makeWebpackConfig (options) {
       // JS LOADER
       test: /\.js$/,
       loader: 'babel',
-      query: {
-        presets: ['es2015']
-      },
+      query: { presets: ['es2015'] },
       exclude: /node_modules/
     }, {
       // ASSET LOADER
@@ -68,52 +41,35 @@ module.exports = function makeWebpackConfig (options) {
     },
     {
       test: /\.css$/,
-      loader: 'style-loader!css-loader'
+      loader: !options.prod ? 'style-loader!css-loader' : ExtractTextPlugin.extract("css-loader")
     }]
   };
 
-
-  /**
-   * Plugins
-   * Reference: http://webpack.github.io/docs/configuration.html#plugins
-   * List: http://webpack.github.io/docs/list-of-plugins.html
-   */
+  // Plugins
   config.plugins = [
-    // Reference: https://github.com/webpack/extract-text-webpack-plugin
-    // Extract css files
-    new ExtractTextPlugin('[name].[hash].css')
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
+    })
   ];
 
-  // Add build specific plugins
-  if (BUILD) {
+  if (options.prod) {
     config.plugins.push(
-      // Reference: http://webpack.github.io/docs/list-of-plugins.html#noerrorsplugin
-      // Only emit files when there are no errors
       new webpack.NoErrorsPlugin(),
-
-      // Reference: http://webpack.github.io/docs/list-of-plugins.html#dedupeplugin
-      // Dedupe modules in the output
       new webpack.optimize.DedupePlugin(),
-
-      // Reference: http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
-      // Minify all javascript, switch loaders to minimizing mode
-      new webpack.optimize.UglifyJsPlugin()
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: false,
+        },
+      }),
+      new ExtractTextPlugin('app.[hash].css', {allChunks: true}),
+      new HtmlWebpackPlugin({
+        template: './src/index.html',
+        prod: true
+      })
     )
   }
 
-  config.plugins.push(
-    new HtmlWebpackPlugin({
-      template: './src/index.html',
-      inject: 'body'
-    })
-  )
-
-
-  /**
-   * Dev server configuration
-   * Reference: http://webpack.github.io/docs/configuration.html#devserver
-   * Reference: http://webpack.github.io/docs/webpack-dev-server.html
-   */
+  // Devserver
   config.devServer = {
     contentBase: './public',
     stats: {
@@ -125,4 +81,5 @@ module.exports = function makeWebpackConfig (options) {
   };
 
   return config;
+
 };
