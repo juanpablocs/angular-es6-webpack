@@ -8,7 +8,7 @@ import HomeController from './home.controller';
 
 import authService from '../../services/auth.service';
 
-import './css/home.css'
+import './css/home.styl'
 
 export default angular.module('app.home', [uirouter, authService])
   .config(routing)

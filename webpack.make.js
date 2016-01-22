@@ -24,25 +24,27 @@ module.exports = function makeWebpackConfig (options) {
   // Initialize module
   config.module = {
     preLoaders: [],
-    loaders: [{
-      // JS LOADER
-      test: /\.js$/,
-      loader: 'babel',
-      query: { presets: ['es2015'] },
-      exclude: /node_modules/
-    }, {
-      // ASSET LOADER
-      test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
-      loader: 'file'
-    }, {
-      // HTML LOADER
-      test: /\.html$/,
-      loader: 'raw'
-    },
-    {
-      test: /\.css$/,
-      loader: !options.prod ? 'style-loader!css-loader' : ExtractTextPlugin.extract("css-loader")
-    }]
+    loaders:
+    [
+      {
+        test: /\.js$/,
+        loader: 'babel',
+        query: { presets: ['es2015'] },
+        exclude: /node_modules/
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
+        loader: 'file'
+      },
+      {
+        test: /\.html$/,
+        loader: 'raw'
+      },
+      {
+        test: /\.styl$/,
+        loader: !options.prod ? 'style-loader!css-loader!stylus-loader' : ExtractTextPlugin.extract("css-loader!stylus-loader")
+      }
+    ]
   };
 
   // Plugins
@@ -66,7 +68,7 @@ module.exports = function makeWebpackConfig (options) {
         template: './src/index.html',
         prod: true
       })
-    )
+    );
   }
 
   // Devserver
