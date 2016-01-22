@@ -1,8 +1,12 @@
 'use strict';
 
-var webpack = require('webpack');
+var webpack           = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+var StylusNib     = require('nib');
+var StylusRupture = require('rupture');
+
 
 module.exports = function makeWebpackConfig (options) {
 
@@ -45,6 +49,12 @@ module.exports = function makeWebpackConfig (options) {
         loader: !options.prod ? 'style-loader!css-loader!stylus-loader' : ExtractTextPlugin.extract("css-loader!stylus-loader")
       }
     ]
+  };
+
+  // Lib Stylus
+  config.stylus = {
+    use: [StylusNib(), StylusRupture()],
+    import: ['~nib/index.styl']
   };
 
   // Plugins
